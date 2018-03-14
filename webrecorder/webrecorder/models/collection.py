@@ -30,6 +30,8 @@ class Collection(PagesMixin, RedisUniqueComponent):
     LIST_NAMES_KEY = 'c:{coll}:ln'
     LIST_REDIR_KEY = 'c:{coll}:lr'
 
+    AUTO_KEY = 'c:{coll}:autos'
+
     COLL_CDXJ_KEY = 'c:{coll}:cdxj'
 
     INDEX_FILE_KEY = '@index_file'
@@ -82,6 +84,9 @@ class Collection(PagesMixin, RedisUniqueComponent):
                     access=self.access)
 
         aid = auto.init_new(self, props)
+
+        self.redis.sadd(self.AUTO_KEY.format(coll=self.my_id), aid)
+
         return aid
 
     def get_auto(self, aid):
@@ -98,6 +103,19 @@ class Collection(PagesMixin, RedisUniqueComponent):
         auto.owner = self
 
         return auto
+
+    def get_autos(self):
+        return [self.get_auto(aid) for aid in self.redis.smembers(self.AUTO_KEY.format(coll=self.my_id))]
+
+    def remove_auto(self, auto):
+        self.access.assert_can_admin_coll(self)
+
+        count = self.redis.srem(self.AUTO_KEY.format(coll=self.my_id))
+
+        if not count:
+            return False
+
+        return auto.delete_me()
 
     def create_bookmark_list(self, props):
         self.access.assert_can_write_coll(self)
@@ -322,6 +340,10 @@ class Collection(PagesMixin, RedisUniqueComponent):
 
         for blist in self.get_lists(load=False):
             blist.delete_me()
+
+        for auto in self.get_autos():
+            if auto:
+                auto.delete_me()
 
         if storage:
             if not storage.delete_collection(self):
