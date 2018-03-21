@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { asyncConnect } from 'redux-connect';
 import { Map } from 'immutable';
 
-import { load as loadColl } from 'redux/modules/collection';
-import { load as loadList, removeBookmark, saveSort } from 'redux/modules/list';
+import { load as loadColl, newAuto, queueAuto } from 'redux/modules/collection';
+import { bulkAddTo, create as createList, load as loadList, removeBookmark, saveSort } from 'redux/modules/list';
+
 import { isLoaded as isRBLoaded, load as loadRB } from 'redux/modules/remoteBrowsers';
 import { deleteRecording } from 'redux/modules/recordings';
 import { getOrderedPages, getOrderedRecordings, pageSearchResults } from 'redux/selectors';
@@ -105,6 +106,14 @@ const mapDispatchToProps = (dispatch, { match: { params: { user, coll } } }) => 
     },
     saveBookmarkSort: (list, ids) => {
       dispatch(saveSort(user, coll, list, ids));
+    },
+    startAuto: (user, coll, listTitle, bookmarks) => {
+      let listId;
+      let autoId;
+      dispatch(createList(user, coll, listTitle))
+        .then(({ list }) => { listId = list.id; return dispatch(newAuto(user, coll)); })
+        .then(({ auto }) => { autoId = auto; return dispatch(bulkAddTo(user, coll, listId, bookmarks)); })
+        .then(res => dispatch(queueAuto(user, coll, autoId, listId)));
     },
     dispatch
   };

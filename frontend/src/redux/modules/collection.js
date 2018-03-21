@@ -23,6 +23,14 @@ const COLL_SET_PUBLIC = 'wr/coll/SET_PUBLIC';
 const COLL_SET_PUBLIC_SUCCESS = 'wr/coll/SET_PUBLIC_SUCCESS';
 const COLL_SET_PUBLIC_FAIL = 'wr/coll/SET_PUBLIC_FAIL';
 
+const NEW_AUTO = 'wr/NEW_AUTO';
+const NEW_AUTO_SUCCESS = 'wr/NEW_AUTO_SUCCESS';
+const NEW_AUTO_FAIL = 'wr/NEW_AUTO_FAIL';
+const QUEUE_AUTO = 'wr/QUEUE_AUTO';
+const QUEUE_AUTO_SUCCESS = 'wr/QUEUE_AUTO_SUCCESS';
+const QUEUE_AUTO_FAIL = 'wr/QUEUE_AUTO_FAIL';
+
+
 export const defaultSort = { sort: 'timestamp', dir: 'DESC' };
 const initialState = fromJS({
   edited: false,
@@ -98,6 +106,8 @@ export default function collection(state = initialState, action = {}) {
       });
     case RESET_EDIT_STATE:
       return state.set('edited', false);
+    case NEW_AUTO_SUCCESS:
+      return state.set('autoId', action.result.auto);
 
     case LISTS_LOAD_FAIL:
     case LISTS_LOAD:
@@ -168,5 +178,31 @@ export function setSort(sortBy) {
   return {
     type: COLL_SET_SORT,
     sortBy
+  };
+}
+
+
+export function newAuto(user, coll) {
+  return {
+    types: [NEW_AUTO, NEW_AUTO_SUCCESS, NEW_AUTO_FAIL],
+    promise: client => client.post(`${apiPath}/auto`, {
+      params: { user, coll },
+      data: {
+        hops: 1
+      }
+    })
+  };
+}
+
+
+export function queueAuto(user, coll, aid, listId) {
+  return {
+    types: [QUEUE_AUTO, QUEUE_AUTO_SUCCESS, QUEUE_AUTO_FAIL],
+    promise: client => client.post(`${apiPath}/auto/${aid}/queue_list`, {
+      params: { user, coll },
+      data: {
+        list: listId
+      }
+    })
   };
 }

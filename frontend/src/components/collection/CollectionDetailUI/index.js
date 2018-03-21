@@ -4,13 +4,16 @@ import PropTypes from 'prop-types';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import Column from 'react-virtualized/dist/commonjs/Table/Column';
 import Table from 'react-virtualized/dist/commonjs/Table';
+import { Button, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { fromJS } from 'immutable';
 
 import { setSort } from 'redux/modules/collection';
 import { getStorage, inStorage, setStorage, range } from 'helpers/utils';
 
 import { CollectionFilters, CollectionHeader } from 'containers';
 
+import Modal from 'components/Modal';
 import SessionCollapsible from 'components/collection/SessionCollapsible';
 import { CloseIcon } from 'components/icons';
 
@@ -35,7 +38,8 @@ class CollectionDetailUI extends Component {
     pages: PropTypes.object,
     recordings: PropTypes.object,
     removeBookmark: PropTypes.func,
-    saveBookmarkSort: PropTypes.func
+    saveBookmarkSort: PropTypes.func,
+    startAuto: PropTypes.func
   };
 
   static contextTypes = {
@@ -46,6 +50,8 @@ class CollectionDetailUI extends Component {
   constructor(props) {
     super(props);
 
+    this.keyBuffer = [];
+    this.matchCode = fromJS([91, 16, 65]);
     this.initialState = {
       expandAll: false,
       groupDisplay: false,
@@ -54,7 +60,11 @@ class CollectionDetailUI extends Component {
       selectedSession: null,
       selectedPageIdx: null,
       selectedGroupedPageIdx: null,
-      selectedRec: null
+      selectedRec: null,
+
+      autoModal: false,
+      listAutoName: '',
+      listAutoLinks: ''
     };
 
     this.state = this.initialState;
@@ -68,6 +78,8 @@ class CollectionDetailUI extends Component {
         console.log('Wrong `groupDisplay` storage value');
       }
     }
+
+    document.addEventListener('keydown', this.handleKey);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -90,6 +102,10 @@ class CollectionDetailUI extends Component {
     if(!prevState.gourpedDisplay && this.state.groupDisplay && this.state.scrollToRec) {
       this.openAndScroll(this.state.scrollToRec);
     }
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKey);
   }
 
   onToggle = (e) => {
@@ -183,6 +199,50 @@ class CollectionDetailUI extends Component {
     }
   }
 
+  handleKey = (evt) => {
+    this.keyBuffer.push(evt.keyCode);
+
+    if (fromJS(this.keyBuffer).equals(this.matchCode)) {
+      this.setState({ autoModal: true });
+    }
+
+    setTimeout(() => { this.keyBuffer = []; }, 1000);
+  }
+
+  closeAutoModal = () => this.setState({ autoModal: false })
+
+  startAutomation = () => {
+    const { collection } = this.props;
+    const { listAutoName, listAutoLinks } = this.state;
+
+    const links = listAutoLinks.trim().split('\n').map(o => ({ url: o, title: 'Untitled Document' }));
+    this.props.startAuto(collection.get('user'), collection.get('id'), listAutoName, links);
+  }
+
+  addToList = () => {
+    const { checkedLists, selectedPageIdx } = this.state;
+    const { pages } = this.props;
+
+    if (!checkedLists || Object.entries(checkedLists).length === 0 || !selectedPageIdx) {
+      return;
+    }
+
+    const selectedLists = Object.entries(checkedLists).filter(l => l[1]);
+    const lists = selectedLists.map(obj => obj[0]);
+
+    const pagesToAdd = [];
+
+    if (typeof selectedPageIdx === "object") {
+      for(const pgIdx of selectedPageIdx) {
+        pagesToAdd.push(pages.get(pgIdx));
+      }
+    } else {
+      pagesToAdd.push(pages.get(selectedPageIdx));
+    }
+
+    this.props.addPagesToLists(pagesToAdd, lists);
+    this.closeAddToList();
+  }
 
   openAndScroll = (sesh) => {
     const index = this.props.recordings.findIndex(o => o.get('id') === sesh.get('id'));
@@ -421,6 +481,42 @@ class CollectionDetailUI extends Component {
             </div>
           </div>
         </div>
+        {
+          /* add to list modal */
+          canAdmin &&
+            <Modal
+              visible={this.state.autoModal}
+              closeCb={this.closeAutoModal}
+              header={<h4>New Automation</h4>}
+              footer={
+                <React.Fragment>
+                  <Button style={{ marginRight: 5 }}>Cancel</Button>
+                  <Button onClick={this.startAutomation} bsStyle="success">Create</Button>
+                </React.Fragment>
+              }>
+              <React.Fragment>
+                <FormGroup>
+                  <ControlLabel>List title:</ControlLabel>
+                  <FormControl
+                    id="confirm-delete"
+                    type="text"
+                    name="listAutoName"
+                    value={this.state.listAutoName}
+                    onChange={this.handleChange} />
+                </FormGroup>
+                <FormGroup controlId="formControlsTextarea">
+                  <ControlLabel>Links</ControlLabel>
+                  <FormControl
+                    componentClass="textarea"
+                    name="listAutoLinks"
+                    value={this.state.listAutoLinks}
+                    placeholder="http://example.com"
+                    style={{ minHeight: '200px' }}
+                    onChange={this.handleChange} />
+                </FormGroup>
+              </React.Fragment>
+            </Modal>
+        }
       </div>
     );
   }
