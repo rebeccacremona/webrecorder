@@ -53,6 +53,7 @@ class CollectionDetailUI extends Component {
 
     this.keyBuffer = [];
     this.matchCode = fromJS([91, 16, 65]);
+    this.kbHandle = null;
     this.initialState = {
       expandAll: false,
       groupDisplay: false,
@@ -207,7 +208,8 @@ class CollectionDetailUI extends Component {
       this.setState({ autoModal: true });
     }
 
-    setTimeout(() => { this.keyBuffer = []; }, 1000);
+    clearTimeout(this.kbHandle);
+    this.kbHandle = setTimeout(() => { this.keyBuffer = []; }, 1000);
   }
 
   closeAutoModal = () => this.setState({ autoModal: false })
