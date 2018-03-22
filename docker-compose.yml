@@ -126,7 +126,7 @@ services:
             - AUDIO_TYPE=opus
 
             - CONTAINER_EXPIRE_SECS=3600
-            - IDLE_TIMEOUT=120
+            - IDLE_TIMEOUT=360
 
         depends_on:
             - redis
