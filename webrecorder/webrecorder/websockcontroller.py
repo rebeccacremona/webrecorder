@@ -188,6 +188,7 @@ class BaseWebSockHandler(object):
         if not msg:
             return
 
+        print(msg)
         to_browser = None
         from_browser = None
         if self.name == 'to':

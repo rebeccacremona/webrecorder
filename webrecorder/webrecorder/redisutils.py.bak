@@ -1,0 +1,72 @@
+import json
+
+
+# ============================================================================
+class RedisTable(object):
+    def __init__(self, redis, key_template, name_key):
+        self.redis = redis
+        self.key_template = key_template
+        self.iteritems = self.items
+        self.name_key = name_key
+
+    def get_key(self, name):
+        key = self.key_template.format(name)
+
+    def __contains__(self, name):
+        return self.redis.exists(self.get_key(name))
+
+    def __setitem__(self, name, values):
+        if isinstance(values, RedisHashTable):
+            return
+
+        elif isinstance(values, dict):
+            return self.redis.hmset(self.get_key(name), values)
+
+        else:
+            raise Exception('invalid values')
+
+    def __delitem__(self, name):
+        return self.redis.delete(self.get_key(name))
+
+    def __getitem__(self, name):
+        return RedisHashTable(self.get_key(name))
+
+    def __iter__(self):
+        keys = self.redis.smembers(self.name_key)
+        return iter(keys)
+
+    def items(self):
+        for key in self:
+            yield RedisHashTable(key)
+
+    def pop(self, name):
+        result = self[name]
+        key = self.get_key(name)
+        self.redis.delete(key, name)
+        return result
+
+
+# ============================================================================
+class RedisHashTable(object):
+    def __init__(self, redis, key):
+        self.key = key
+        self.redis = redis
+        self.thedict = self.redis.hgetall(key)
+
+    def __getitem__(self, name):
+        return self.thedict[name]
+
+    def __setitem__(self, name, value):
+        self.thedict[name] = value
+        self.redis.hset(name, value)
+
+    def __delitem__(self, name):
+        del self.thedict[name]
+        self.redis.hdel(name)
+
+    def get(self, name, default_val=''):
+        return self.thedict.get(name, default_val)
+
+    def __nonzero__(self):
+        return bool(self.thedict)
+
