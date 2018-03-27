@@ -101,6 +101,7 @@ const mapDispatchToProps = (dispatch, { match: { params: { user, coll } } }) => 
           }
         }, () => { console.log('Rec delete error..'); });
     },
+    refresh: () => dispatch(loadColl(user, coll)),
     removeBookmark: (list, id) => {
       dispatch(removeBookmark(user, coll, list, id))
         .then(() => dispatch(loadList(user, coll, list)));
