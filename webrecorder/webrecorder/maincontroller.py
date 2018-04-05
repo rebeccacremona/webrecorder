@@ -1,3 +1,4 @@
+import bottle
 from bottle import Bottle, debug, JSONPlugin, request, response, static_file
 
 import logging
@@ -78,6 +79,7 @@ class MainController(BaseController):
             self.static_root = resource_filename('webrecorder', 'static/')
             gevent.spawn(default_build, force_build=False)
 
+        bottle.BaseRequest.MEMFILE_MAX = 500000 # 500kb
         bottle_app = Bottle()
         self.bottle_app = bottle_app
 
