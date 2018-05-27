@@ -63,7 +63,7 @@ class Auto(RedisUniqueComponent):
             for scope in scopes:
                 self.redis.sadd(scope_key, scope)
 
-        self.name = str(aid)
+        #self.name = str(aid)
         self._init_new()
 
         self.redis.rpush(self.NEW_AUTO_KEY, aid)

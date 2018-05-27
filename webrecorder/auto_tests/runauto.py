@@ -31,12 +31,12 @@ class TestAuto(object):
                   'password': 'TestTest123',
                  }
 
-        res = self.post('/api/v1/login', json=params)
+        res = self.post('/api/v1/auth/login', json=params)
         assert res.json()['username'] == self.USER
 
     def test_create_coll(self):
         res = self.post('/api/v1/collections?user=testauto',
-                        data={'title': 'Auto Test'})
+                        json={'title': 'Auto Test'})
 
         assert res.json()['collection']['id'] == 'auto-test'
         assert res.json()['collection']['title'] == 'Auto Test'
@@ -126,7 +126,7 @@ class TestAuto(object):
 
     @pytest.mark.delete
     def test_delete_coll(self):
-        res = self.delete('/api/v1/collections/auto-test?user=testauto')
+        res = self.delete('/api/v1/collection/auto-test?user=testauto')
 
         assert res.json() == {'deleted_id': 'auto-test'}
 
