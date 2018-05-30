@@ -35,6 +35,19 @@ var archives = {{ get_archives() | tojson }};
         <h1 class="text-center"><strong>{{ metadata.product }}</strong></h1>
     </div>
 
+    <div id="news-alert-top" class='alert alert-info' data-news-key="wr-mt" role="alert">
+      <div class="alert-body">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <div class="wr-alert-info">
+            <span>&#128736;</span>
+            <div>
+              <b>Maintainance Notice:</b><br />
+              Webrecorder.io will be offline for maintainance and upgrades from <br/><i>Thursday, May 31st 22:00 EST</i> to <i>Friday, June 1st, 10:00 EST</i>
+             </div>
+          </div>
+      </div>
+    </div>
+
     <div class="row">
         <h4 class="text-center">Collect &amp; Revisit the Web</h4>
         <!-- <h4 class="text-center">Create high-fidelity, interactive web archives of any web site you browse</h4> -->

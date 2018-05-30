@@ -339,6 +339,41 @@ a#collapse-vid-toggle[aria-expanded=tru] .glyphicon-triangle-bottom {
     margin: 0 5% 10px 5%;
 }
 
+/* Top widget */
+#news-alert-top {
+    position: absolute;
+    top: 37px;
+    right: 15px;
+    background-color: white;
+    background-image: none;
+    border: 1px solid #0232F5;
+    color: black;
+}
+#news-alert-top .alert-body {
+    position: relative;
+}
+
+#news-alert-top .close {
+    padding-left: 5px;
+}
+
+#news-alert-top a {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #0232F5;
+}
+#news-alert-top .wr-alert-info {
+    display: flex;
+    display: -ms-flexbox;
+}
+
+#news-alert-top .wr-alert-info span {
+    margin-right: 10px;
+    font-size: 24px;
+}
+
+
+
 /* End homepage */
 
 
