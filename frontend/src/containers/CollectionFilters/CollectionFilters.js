@@ -4,27 +4,24 @@ import { createSearchAction } from 'redux-search';
 
 import { setQueryMode } from 'redux/modules/pageQuery';
 
-import { getSearchText } from 'redux/selectors/search';
-
 import CollectionFiltersUI from 'components/collection/CollectionFiltersUI';
 
 
-const mapStateToProps = (outerState) => {
+const mapStateToProps = (outerState, { searchKey }) => {
   const { app } = outerState;
-  const searchKey = outerState.search['collection.pages'];
-  const isIndexing = searchKey.isSearching && searchKey.text === '';
+  const searchObj = outerState.search[searchKey];
+  const isIndexing = searchObj.isSearching && searchObj.text === '';
 
   return {
-    collection: app.get('collection'),
     isIndexing,
     querying: app.getIn(['pageQuery', 'querying']),
-    searchText: getSearchText(outerState)
+    searchText: outerState.search[searchKey].text
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch, { searchKey }) => {
   return {
-    searchPages: createSearchAction('collection.pages'),
+    searchPages: createSearchAction(searchKey),
     setPageQuery: coll => dispatch(setQueryMode(true, coll)),
     dispatch
   };

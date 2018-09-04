@@ -18,10 +18,12 @@ class CollectionFiltersUI extends PureComponent {
     collection: PropTypes.object,
     dispatch: PropTypes.func,
     isIndexing: PropTypes.bool,
+    objects: PropTypes.objects,
     querying: PropTypes.bool,
     search: PropTypes.func,
-    searchText: PropTypes.string,
+    searchKey: PropTypes.string,
     searchPages: PropTypes.func,
+    searchText: PropTypes.string,
     setPageQuery: PropTypes.func
   };
 
@@ -51,7 +53,7 @@ class CollectionFiltersUI extends PureComponent {
   }
 
   startIndex = () => {
-    const { collection, dispatch, searchPages } = this.props;
+    const { dispatch, objects, searchKey, searchPages } = this.props;
 
     if (this.indexed) {
       return;
@@ -61,15 +63,15 @@ class CollectionFiltersUI extends PureComponent {
 
     dispatch(
       indexResource({
-        resourceName: 'collection.pages',
+        resourceName: searchKey,
         fieldNamesOrIndexFunction: ({ resources, indexDocument }) => {
-          resources.forEach((pg) => {
-            const id = pg.get('id');
-            indexDocument(id, pg.get('title') || '');
-            indexDocument(id, pg.get('url').split('?')[0]);
+          resources.forEach((item) => {
+            const id = item.get('page') ? item.getIn(['page', 'id']) : item.get('id');
+            indexDocument(id, item.get('title') || '');
+            indexDocument(id, item.get('url').split('?')[0]);
           });
         },
-        resources: collection.get('pages')
+        resources: objects
       })
     );
     dispatch(searchPages(''));

@@ -48,6 +48,7 @@ class CollectionDetailUI extends Component {
       PropTypes.object,
       PropTypes.string
     ]),
+    bookmarks: PropTypes.object,
     clearInspector: PropTypes.func,
     clearQuery: PropTypes.func,
     clearSearch: PropTypes.func,
@@ -56,9 +57,9 @@ class CollectionDetailUI extends Component {
     list: PropTypes.object,
     match: PropTypes.object,
     pages: PropTypes.object,
-    publicIndex: PropTypes.bool,
     removeBookmark: PropTypes.func,
     saveBookmarkSort: PropTypes.func,
+    searchText: PropTypes.string,
     setMultiInspector: PropTypes.func,
     setBookmarkInspector: PropTypes.func,
     setPageInspector: PropTypes.func
@@ -85,8 +86,8 @@ class CollectionDetailUI extends Component {
     this.initialState = {
       columns: context.isMobile ? ['timestamp', 'url'] : config.defaultColumns,
       headerEditor: false,
-      listBookmarks: props.list.get('bookmarks'),
-      sortedBookmarks: props.list.get('bookmarks'),
+      listBookmarks: props.bookmarks,
+      sortedBookmarks: props.bookmarks,
       overrideHeight: null,
       selectedPageIdx: null
     };
@@ -131,9 +132,8 @@ class CollectionDetailUI extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.list !== this.props.list) {
-      const bookmarks = nextProps.list.get('bookmarks');
-      this.setState({ listBookmarks: bookmarks, sortedBookmarks: bookmarks });
+    if (nextProps.bookmarks !== this.props.bookmarks) {
+      this.setState({ listBookmarks: nextProps.bookmarks, sortedBookmarks: nextProps.bookmarks });
     }
 
     // clear querybox if removed from url
@@ -299,7 +299,7 @@ class CollectionDetailUI extends Component {
     const { sortedBookmarks } = this.state;
     const o = sortedBookmarks.get(origIndex);
     const sorted = sortedBookmarks.splice(origIndex, 1)
-                                .splice(hoverIndex, 0, o);
+                                  .splice(hoverIndex, 0, o);
 
     this.setState({ sortedBookmarks: sorted });
   }
@@ -382,7 +382,7 @@ class CollectionDetailUI extends Component {
 
   render() {
     const { canAdmin, isAnon } = this.context;
-    const { pages, browsers, collection, list, match: { params }, publicIndex } = this.props;
+    const { pages, browsers, collection, list, match: { params } } = this.props;
     const { listBookmarks, selectedPageIdx, sortedBookmarks } = this.state;
     const activeList = Boolean(params.list);
 
@@ -419,9 +419,8 @@ class CollectionDetailUI extends Component {
     }
 
     const activeListSlug = params.list;
-    const indexPages = !canAdmin && !publicIndex ? List() : pages;
-    const objects = activeList ? listBookmarks : indexPages;
-    const displayObjects = activeList ? sortedBookmarks : indexPages;
+    const objects = activeList ? listBookmarks : pages;
+    const displayObjects = activeList ? sortedBookmarks : pages;
     const objectLabel = activeList ? 'Bookmark Title' : 'Page Title';
 
     const columnDefs = {
@@ -554,23 +553,20 @@ class CollectionDetailUI extends Component {
           </div>
         </Sidebar>
 
-
         <div className="table-container">
           {
             activeList ?
               <ListHeader /> :
               <div className="collection-header">
                 <h2>Pages</h2>
-                <CollectionFilters />
+                <CollectionFilters objects={collection.get('pages')} searchKey="collection.pages" />
               </div>
           }
-
           <OutsideClick classes="wr-coll-detail-table" handleClick={this.deselect}>
             {
               canAdmin &&
                 <React.Fragment>
                   <Button onClick={this.toggleHeaderModal} className="table-header-menu borderless" bsSize="xs">
-                    {/* TODO: placeholder icon */}
                     <span style={{ display: 'inline-block', fontWeight: 'bold', transform: 'rotateZ(90deg)' }}>...</span>
                   </Button>
                   <Modal

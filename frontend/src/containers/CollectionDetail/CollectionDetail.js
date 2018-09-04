@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import querystring from 'querystring';
+import { batchActions } from 'redux-batched-actions';
 import { asyncConnect } from 'redux-connect';
 import { createSearchAction } from 'redux-search';
 import { Map } from 'immutable';
@@ -12,7 +13,8 @@ import { setQueryMode } from 'redux/modules/pageQuery';
 import { isLoaded as isRBLoaded, load as loadRB } from 'redux/modules/remoteBrowsers';
 
 import { getQueryPages, getOrderedPages } from 'redux/selectors';
-import { pageSearchResults } from 'redux/selectors/search';
+import { bkSearchResults } from 'redux/selectors/bookmarkSearch';
+import { pageSearchResults } from 'redux/selectors/pageSearch';
 
 import CollectionDetailUI from 'components/collection/CollectionDetailUI';
 
@@ -122,9 +124,14 @@ const initialData = [
 
 const mapStateToProps = (outerState) => {
   const { app, reduxAsyncConnect } = outerState;
-  const isLoaded = app.getIn(['collection', 'loaded']);
-  const { pageFeed, searchText } = isLoaded ? pageSearchResults(outerState) : { pageFeed: Map(), searchText: '' };
-  const isIndexing = isLoaded && !pageFeed.size && app.getIn(['collection', 'pages']).size && !searchText;
+  const isPgLoaded = app.getIn(['collection', 'loaded']);
+  const isBkLoaded = app.getIn(['list', 'loaded']);
+
+  const { pageFeed, pgSearchText } = isPgLoaded ? pageSearchResults(outerState) : { pageFeed: Map(), pgSearchText: '' };
+  const { bkFeed, bkSearchText } = isBkLoaded ? bkSearchResults(outerState) : { bkFeed: Map(), bkSearchText: '' };
+
+  const isPgIndexing = isPgLoaded && !pageFeed.size && app.getIn(['collection', 'pages']).size && !pgSearchText;
+  const isBkIndexing = isBkLoaded && !bkFeed.size && app.getIn(['list', 'bookmarks']).size && !bkSearchText;
 
   const querying = app.getIn(['pageQuery', 'querying']);
   let pages;
@@ -132,11 +139,14 @@ const mapStateToProps = (outerState) => {
   if (querying) {
     pages = getQueryPages(app);
   } else {
-    pages = isIndexing ? getOrderedPages(app) : pageFeed;
+    pages = isPgIndexing ? getOrderedPages(app) : pageFeed;
   }
+
+  const bookmarks = isBkIndexing ? app.getIn(['list', 'bookmarks']).toList() : bkFeed;
 
   return {
     auth: app.get('auth'),
+    bookmarks,
     browsers: app.get('remoteBrowsers'),
     bkDeleting: app.getIn(['list', 'bkDeleting']),
     bkDeleteError: app.getIn(['list', 'bkDeleteError']),
@@ -144,8 +154,7 @@ const mapStateToProps = (outerState) => {
     list: app.get('list'),
     loaded: reduxAsyncConnect.loaded,
     pages,
-    publicIndex: app.getIn(['collection', 'public_index']),
-    searchText
+    searchText: pgSearchText || bkSearchText
   };
 };
 
@@ -153,7 +162,10 @@ const mapDispatchToProps = (dispatch, { match: { params: { user, coll } } }) => 
   return {
     clearInspector: () => dispatch(clear()),
     clearQuery: () => dispatch(setQueryMode(false)),
-    clearSearch: () => dispatch(createSearchAction('collection.pages')('')),
+    clearSearch: () => {
+      dispatch(createSearchAction('collection.pages')(''));
+      dispatch(createSearchAction('list.bookmarks')(''));
+    },
     setMultiInspector: count => dispatch(multiSelect(count)),
     setPageInspector: fields => dispatch(selectPage(fields)),
     setBookmarkInspector: bk => dispatch(selectBookmark(bk)),

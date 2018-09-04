@@ -5,6 +5,7 @@ import Collapsible from 'react-collapsible';
 
 import EditModal from 'components/collection/EditModal';
 import WYSIWYG from 'components/WYSIWYG';
+import { CollectionFilters } from 'containers';
 import { CarotIcon, ListIcon } from 'components/icons';
 
 import './style.scss';
@@ -57,29 +58,33 @@ class ListHeaderUI extends Component {
 
     return (
       <div className="wr-list-header">
-        <div className={classNames('banner')}>
-          <ListIcon />
-          <h2 role={canAdmin ? 'button' : 'presentation'} className={classNames({ 'click-highlight': canAdmin })} onClick={canAdmin ? this.editModal : undefined}>{list.get('title')}</h2>
+        <div className="title-group">
+          <div className={classNames('banner')}>
+            <ListIcon />
+            <h2 role={canAdmin ? 'button' : 'presentation'} className={classNames({ 'click-highlight': canAdmin })} onClick={canAdmin ? this.editModal : undefined}>{list.get('title')}</h2>
+          </div>
+
+          {
+            (list.get('desc') || canAdmin) &&
+              <Collapsible
+                lazyRender
+                easing="ease-in-out"
+                onClose={this.closeDesc}
+                onOpen={this.openDesc}
+                overflowWhenOpen="visible"
+                transitionTime={300}
+                trigger={trigger}>
+                <div role={canAdmin ? 'button' : 'presentation'} className={classNames({ 'click-highlight': canAdmin })} onClick={canAdmin ? this.editModal : undefined}>
+                  <WYSIWYG
+                    readOnly
+                    initial={list.get('desc') || '\\+ Add Description'}
+                    key={list.get('id')} />
+                </div>
+              </Collapsible>
+          }
         </div>
 
-        {
-          (list.get('desc') || canAdmin) &&
-            <Collapsible
-              lazyRender
-              easing="ease-in-out"
-              onClose={this.closeDesc}
-              onOpen={this.openDesc}
-              overflowWhenOpen="visible"
-              transitionTime={300}
-              trigger={trigger}>
-              <div role={canAdmin ? 'button' : 'presentation'} className={classNames({ 'click-highlight': canAdmin })} onClick={canAdmin ? this.editModal : undefined}>
-                <WYSIWYG
-                  readOnly
-                  initial={list.get('desc') || '\\+ Add Description'}
-                  key={list.get('id')} />
-              </div>
-            </Collapsible>
-        }
+        <CollectionFilters objects={list.get('bookmarks')} searchKey="list.bookmarks" />
 
         {
           canAdmin &&

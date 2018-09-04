@@ -112,13 +112,21 @@ export default function list(state = initialState, action = {}) {
         loaded: false,
         error: null
       });
-    case LIST_LOAD_SUCCESS:
+    case LIST_LOAD_SUCCESS: {
+      const { bookmarks } = action.result.list;
+      const bks = {};
+      if (bookmarks) {
+        bookmarks.forEach((bk) => { bks[bk.page_id] = bk; });
+      }
+
       return state.merge({
         loading: false,
         loaded: true,
         error: null,
-        ...action.result.list
+        ...action.result.list,
+        bookmarks: bks
       });
+    }
     case LIST_LOAD_FAIL:
       return state.merge(action.error);
     case BOOKMARK_EDIT_SUCCESS:

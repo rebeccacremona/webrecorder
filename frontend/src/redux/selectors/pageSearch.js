@@ -18,21 +18,15 @@ const { text, result } = getSearchSelectors({
 });
 
 
-export const getSearchText = createSelector(
-  [text],
-  searchText => searchText
-);
-
-
 export const tsOrderedPageSearchResults = createSelector(
   [result, getPages, text],
-  (pageIds, pageObjs, searchText) => {
+  (pageIds, pageObjs, pgSearchText) => {
     const pages = List(pageIds.map(id => pageObjs.get(id)));
     const pageFeed = pages.sortBy(o => o.get('timestamp')).reverse();
 
     return {
       pageFeed,
-      searchText
+      pgSearchText
     };
   }
 );
@@ -40,19 +34,19 @@ export const tsOrderedPageSearchResults = createSelector(
 
 export const pageSearchResults = createSelector(
   [result, getPages, userSortBy, userSortDir, text],
-  (pageIds, pageObjs, sort, dir, searchText) => {
+  (pageIds, pageObjs, sort, dir, pgSearchText) => {
     const pages = List(pageIds.map(id => pageObjs.get(id)));
     const pageFeed = pages.sortBy(o => o.get(sort));
 
     if (dir === 'DESC') {
       return {
         pageFeed: pageFeed.reverse(),
-        searchText
+        pgSearchText
       };
     }
     return {
       pageFeed,
-      searchText
+      pgSearchText
     };
   }
 );

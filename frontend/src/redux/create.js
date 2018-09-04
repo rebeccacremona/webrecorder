@@ -27,6 +27,15 @@ export default function createStore(client, data) {
             indexDocument(id, pg.get('url').split('?')[0]);
           });
         }
+      },
+      'list.bookmarks': ({ resources, indexDocument, state }) => {
+        if (resources && !__SERVER__) {
+          resources.forEach((pg) => {
+            const id = pg.get('id');
+            indexDocument(id, pg.get('title') || '');
+            indexDocument(id, pg.get('url').split('?')[0]);
+          });
+        }
       }
     }
     // manually index in CollectionFiltersUI
