@@ -58,7 +58,7 @@ class InspectorPanelUI extends PureComponent {
 
     const bk = selectedBk ? list.get('bookmarks').find(o => o.get('id') === selectedBk) : false;
     const pg = bk ? bk.get('page') : collection.getIn(['pages', selectedPage]);
-    const selectedIndex = selectedBk ? list.get('bookmarks').findIndex(o => o.get('id') === selectedBk) : null;
+    const selectedIndex = selectedBk ? list.get('bookmarks').toList().findIndex(o => o.get('id') === selectedBk) : null;
 
     return (
       <div className="wr-inspector">
