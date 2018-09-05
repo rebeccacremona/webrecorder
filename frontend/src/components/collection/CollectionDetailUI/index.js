@@ -556,7 +556,7 @@ class CollectionDetailUI extends Component {
         <div className="table-container">
           {
             activeList ?
-              <ListHeader /> :
+              <ListHeader key={list.get('id')} /> :
               <div className="collection-header">
                 <h2>Pages</h2>
                 <CollectionFilters objects={collection.get('pages')} searchKey="collection.pages" />
