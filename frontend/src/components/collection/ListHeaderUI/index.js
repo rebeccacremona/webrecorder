@@ -84,7 +84,10 @@ class ListHeaderUI extends Component {
           }
         </div>
 
-        <CollectionFilters objects={list.get('bookmarks')} searchKey="list.bookmarks" />
+        <CollectionFilters
+          objects={list.get('bookmarks')}
+          queryable={false}
+          searchKey="list.bookmarks" />
 
         {
           canAdmin &&

@@ -19,12 +19,17 @@ class CollectionFiltersUI extends PureComponent {
     dispatch: PropTypes.func,
     isIndexing: PropTypes.bool,
     objects: PropTypes.objects,
+    queryable: PropTypes.bool,
     querying: PropTypes.bool,
     search: PropTypes.func,
     searchKey: PropTypes.string,
     searchPages: PropTypes.func,
     searchText: PropTypes.string,
     setPageQuery: PropTypes.func
+  };
+
+  static defaultProps = {
+    queryable: true
   };
 
   constructor(props) {
@@ -34,9 +39,9 @@ class CollectionFiltersUI extends PureComponent {
   }
 
   search = (evt) => {
-    const { dispatch, searchPages, setPageQuery } = this.props;
+    const { dispatch, queryable, searchPages, setPageQuery } = this.props;
 
-    const queryColumn = columns.find(c => evt.target.value.startsWith(`${c}:`));
+    const queryColumn = queryable && columns.find(c => evt.target.value.startsWith(`${c}:`));
 
     if (queryColumn) {
       // TODO: issue with batchActions and redux-search

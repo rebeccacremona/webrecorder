@@ -350,7 +350,7 @@ class CollectionDetailUI extends Component {
       return <DefaultRow {...props} />;
     }
 
-    if (list) {
+    if (list && !this.props.searchText) {
       return (
         <DnDSortableRow
           id={props.rowData.get('id')}
