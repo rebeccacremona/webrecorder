@@ -131,7 +131,7 @@ const mapStateToProps = (outerState) => {
   const { bkFeed, bkSearchText } = isBkLoaded ? bkSearchResults(outerState) : { bkFeed: Map(), bkSearchText: '' };
 
   const isPgIndexing = isPgLoaded && !pageFeed.size && app.getIn(['collection', 'pages']).size && !pgSearchText;
-  const isBkIndexing = isBkLoaded && !bkFeed.size && app.getIn(['list', 'bookmarks']).size && !bkSearchText;
+  const isBkIndexing = isBkLoaded && bkFeed.size !== app.getIn(['list', 'bookmarks']).size && !bkSearchText;
 
   const querying = app.getIn(['pageQuery', 'querying']);
   let pages;

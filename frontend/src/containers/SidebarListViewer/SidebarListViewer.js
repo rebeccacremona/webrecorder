@@ -5,17 +5,17 @@ import { saveDelay } from 'config';
 
 import { clear, selectBookmark } from 'redux/modules/inspector';
 import { resetEditState, edit } from 'redux/modules/list';
+import { getActiveBookmark } from 'redux/selectors';
 
 import { SidebarListViewerUI } from 'components/controls';
 
 
 const mapStateToProps = (outerState) => {
   const { app } = outerState;
-  const bkidx = app.getIn(['controls', 'activeBookmarkId']);
-  const bookmarks = app.getIn(['list', 'bookmarks']);
+  const bookmarks = app.getIn(['list', 'bookmarks']).toList();
 
   return {
-    activeBookmark: bkidx ? bookmarks.findIndex(o => o.get('id') === bkidx) : -1,
+    activeBookmark: getActiveBookmark(outerState),
     bookmarks,
     collection: app.get('collection'),
     list: app.get('list'),

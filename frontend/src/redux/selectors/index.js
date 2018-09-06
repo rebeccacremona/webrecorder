@@ -169,7 +169,11 @@ export const getActivePage = createSelector(
 export const getActiveBookmark = createSelector(
   [getListBookmarks, getActiveBookmarkId],
   (bookmarks, bkId) => {
-    return bookmarks.find(bk => bk.get('id') === bkId);
+    if (bkId) {
+      return bookmarks.toList().findIndex(bk => bk.get('id') === bkId);
+    }
+
+    return -1;
   }
 );
 
