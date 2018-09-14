@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import querystring from 'querystring';
-import { batchActions } from 'redux-batched-actions';
 import { asyncConnect } from 'redux-connect';
 import { createSearchAction } from 'redux-search';
-import { Map } from 'immutable';
+import { List } from 'immutable';
 
-import { isLoaded as isCollLoaded, getBookmarkCount, load as loadColl } from 'redux/modules/collection';
+import { isLoaded as isCollLoaded, getBookmarkCount,
+         load as loadColl } from 'redux/modules/collection';
 import { clear, multiSelect, selectBookmark, selectPage } from 'redux/modules/inspector';
 import { load as loadList, removeBookmark, bookmarkSort } from 'redux/modules/list';
 import { setQueryMode } from 'redux/modules/pageQuery';
@@ -127,8 +127,8 @@ const mapStateToProps = (outerState) => {
   const isPgLoaded = app.getIn(['collection', 'loaded']);
   const isBkLoaded = app.getIn(['list', 'loaded']);
 
-  const { pageFeed, pgSearchText } = isPgLoaded ? pageSearchResults(outerState) : { pageFeed: Map(), pgSearchText: '' };
-  const { bkFeed, bkSearchText } = isBkLoaded ? bkSearchResults(outerState) : { bkFeed: Map(), bkSearchText: '' };
+  const { pageFeed, pgSearchText } = isPgLoaded ? pageSearchResults(outerState) : { pageFeed: List(), pgSearchText: '' };
+  const { bkFeed, bkSearchText } = isBkLoaded ? bkSearchResults(outerState) : { bkFeed: List(), bkSearchText: '' };
 
   const isPgIndexing = isPgLoaded && !pageFeed.size && app.getIn(['collection', 'pages']).size && !pgSearchText;
   const isBkIndexing = isBkLoaded && bkFeed.size !== app.getIn(['list', 'bookmarks']).size && !bkSearchText;
@@ -151,6 +151,7 @@ const mapStateToProps = (outerState) => {
     bkDeleting: app.getIn(['list', 'bkDeleting']),
     bkDeleteError: app.getIn(['list', 'bkDeleteError']),
     collection: app.get('collection'),
+    isBkIndexing,
     list: app.get('list'),
     loaded: reduxAsyncConnect.loaded,
     pages,

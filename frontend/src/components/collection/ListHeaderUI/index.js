@@ -87,6 +87,7 @@ class ListHeaderUI extends Component {
         <CollectionFilters
           objects={list.get('bookmarks')}
           queryable={false}
+          idPrefix="bk"
           searchKey="list.bookmarks" />
 
         {

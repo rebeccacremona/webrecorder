@@ -4,6 +4,8 @@ import { indexResource } from 'redux-search/dist/commonjs/actions';
 
 import { columns } from 'config';
 
+import { clearSearchIndex } from 'redux/modules/collection';
+
 import { QueryBox } from 'containers';
 
 import Searchbox from 'components/Searchbox';
@@ -17,6 +19,7 @@ class CollectionFiltersUI extends PureComponent {
   static propTypes = {
     collection: PropTypes.object,
     dispatch: PropTypes.func,
+    idPrefix: PropTypes.string,
     isIndexing: PropTypes.bool,
     objects: PropTypes.objects,
     queryable: PropTypes.bool,
@@ -36,6 +39,10 @@ class CollectionFiltersUI extends PureComponent {
     super(props);
 
     this.indexed = false;
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(clearSearchIndex());
   }
 
   search = (evt) => {
@@ -58,7 +65,7 @@ class CollectionFiltersUI extends PureComponent {
   }
 
   startIndex = () => {
-    const { dispatch, objects, searchKey, searchPages } = this.props;
+    const { dispatch, idPrefix, objects, searchKey, searchPages } = this.props;
 
     if (this.indexed) {
       return;
@@ -71,7 +78,7 @@ class CollectionFiltersUI extends PureComponent {
         resourceName: searchKey,
         fieldNamesOrIndexFunction: ({ resources, indexDocument }) => {
           resources.forEach((item) => {
-            const id = item.get('page') ? item.getIn(['page', 'id']) : item.get('id');
+            const id = idPrefix ? `${idPrefix}${item.get('id')}` : item.get('id');
             indexDocument(id, item.get('title') || '');
             indexDocument(id, item.get('url').split('?')[0]);
           });

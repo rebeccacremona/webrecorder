@@ -1,4 +1,4 @@
-import { fromJS } from 'immutable';
+import { fromJS, OrderedMap } from 'immutable';
 
 import { apiPath } from 'config';
 
@@ -114,9 +114,10 @@ export default function list(state = initialState, action = {}) {
       });
     case LIST_LOAD_SUCCESS: {
       const { bookmarks } = action.result.list;
-      const bks = {};
+
+      let bks = OrderedMap();
       if (bookmarks) {
-        bookmarks.forEach((bk) => { bks[bk.page_id] = bk; });
+        bookmarks.forEach((bk) => { bks = bks.set(`bk${bk.id}`, fromJS(bk)); });
       }
 
       return state.merge({

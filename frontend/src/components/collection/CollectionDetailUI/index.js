@@ -11,7 +11,7 @@ import { Button } from 'react-bootstrap';
 
 import config from 'config';
 
-import { setSort } from 'redux/modules/collection';
+import { clearSearchIndex, setSort } from 'redux/modules/collection';
 import { getCollectionLink, getListLink, getStorage, inStorage, range, setStorage, truncate } from 'helpers/utils';
 
 import { CollectionFilters, CollectionHeader, InspectorPanel,
@@ -54,6 +54,7 @@ class CollectionDetailUI extends Component {
     clearSearch: PropTypes.func,
     collection: PropTypes.object,
     dispatch: PropTypes.func,
+    isBkIndexing: PropTypes.bool,
     list: PropTypes.object,
     match: PropTypes.object,
     pages: PropTypes.object,
@@ -305,9 +306,14 @@ class CollectionDetailUI extends Component {
   }
 
   saveSort = () => {
-    const { list, saveBookmarkSort } = this.props;
+    const { isBkIndexing, list, saveBookmarkSort } = this.props;
     const { sortedBookmarks } = this.state;
     const order = sortedBookmarks.map(o => o.get('id')).toArray();
+
+    if (!isBkIndexing) {
+      this.props.dispatch(clearSearchIndex());
+    }
+
     this.setState({ listBookmarks: sortedBookmarks });
     saveBookmarkSort(list.get('id'), order);
   }

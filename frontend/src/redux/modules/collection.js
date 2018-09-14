@@ -214,6 +214,17 @@ export default function collection(state = initialState, action = {}) {
 }
 
 
+export function clearSearchIndex(searchKey = 'list.bookmarks') {
+  return {
+    type: '@@reduxSearch/receiveResult',
+    payload: {
+      resourceName: searchKey,
+      result: []
+    }
+  };
+}
+
+
 export function deleteCollection(user, coll) {
   return {
     types: [COLL_DELETE, COLL_DELETE_SUCCESS, COLL_DELETE_FAIL],
