@@ -153,9 +153,11 @@ class CollectionDetailUI extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    const activeList = Boolean(this.props.match.params.list);
+
     if (this.props.loaded && !prevProps.loaded) {
       this.props.clearQuery();
-      if (this.props.searchText) {
+      if (!activeList && this.props.searchText) {
         this.props.clearSearch();
       }
     }

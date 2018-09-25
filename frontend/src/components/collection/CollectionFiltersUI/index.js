@@ -41,6 +41,12 @@ class CollectionFiltersUI extends PureComponent {
     this.indexed = false;
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.objects !== prevProps.objects) {
+      this.indexed = false;
+    }
+  }
+
   componentWillUnmount() {
     this.props.dispatch(clearSearchIndex());
   }
@@ -92,18 +98,16 @@ class CollectionFiltersUI extends PureComponent {
   render() {
     return (
       <div className="wr-coll-utilities">
-        <nav>
-          {
-            this.props.querying ?
-              <QueryBox /> :
-              <Searchbox
-                search={this.search}
-                clear={this.clearSearch}
-                index={this.startIndex}
-                searchText={this.props.searchText}
-                isIndexing={this.props.isIndexing} />
-          }
-        </nav>
+        {
+          this.props.querying ?
+            <QueryBox /> :
+            <Searchbox
+              search={this.search}
+              clear={this.clearSearch}
+              index={this.startIndex}
+              searchText={this.props.searchText}
+              isIndexing={this.props.isIndexing} />
+        }
       </div>
     );
   }

@@ -165,7 +165,6 @@ const mapDispatchToProps = (dispatch, { match: { params: { user, coll } } }) => 
     clearQuery: () => dispatch(setQueryMode(false)),
     clearSearch: () => {
       dispatch(createSearchAction('collection.pages')(''));
-      dispatch(createSearchAction('list.bookmarks')(''));
     },
     setMultiInspector: count => dispatch(multiSelect(count)),
     setPageInspector: fields => dispatch(selectPage(fields)),
@@ -175,9 +174,7 @@ const mapDispatchToProps = (dispatch, { match: { params: { user, coll } } }) => 
         .then(() => dispatch(loadList(user, coll, list)))
         .then(() => dispatch(getBookmarkCount(user, coll, list)));
     },
-    saveBookmarkSort: (list, ids) => {
-      dispatch(bookmarkSort(user, coll, list, ids));
-    },
+    saveBookmarkSort: (list, ids) => dispatch(bookmarkSort(user, coll, list, ids)),
     dispatch
   };
 };

@@ -1,6 +1,8 @@
 import { apiPath } from 'config';
 import { fromJS } from 'immutable';
 
+import { INITIALIZE_RESOURCES } from 'redux-search/dist/commonjs/constants';
+
 const BK_COUNT = 'wr/coll/BK_COUNT';
 const BK_COUNT_SUCCESS = 'wr/coll/BK_COUNT_SUCCESS';
 const BK_COUNT_FAIL = 'wr/coll/BK_COUNT_FAIL';
@@ -216,10 +218,9 @@ export default function collection(state = initialState, action = {}) {
 
 export function clearSearchIndex(searchKey = 'list.bookmarks') {
   return {
-    type: '@@reduxSearch/receiveResult',
+    type: INITIALIZE_RESOURCES,
     payload: {
-      resourceName: searchKey,
-      result: []
+      resourceNames: [searchKey]
     }
   };
 }

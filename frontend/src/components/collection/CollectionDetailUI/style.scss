@@ -90,19 +90,24 @@
 
     .wr-coll-utilities {
         background: #FFF;
-        //z-index: 10;
         margin-left: 1.5rem;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
 
-        nav {
-            height: 100%;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
+        .search-box {
+            margin-right: .5rem;
 
-            .search-box {
-                max-width: 35rem;
-                min-width: 15rem;
-                margin-right: .5rem;
+            @media (max-width: $xs) {
+                width: 20rem;
+            }
+
+            @media (min-width: $xs) and (max-width: $md) {
+                width: 23rem;
+            }
+
+            @media (min-width: $md) {
+                width: 35rem;
             }
         }
     }
