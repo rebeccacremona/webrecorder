@@ -1,0 +1,45 @@
+flocks:
+    - name: browsers-vnc
+      containers:
+        - name: xserver
+          image: oldwebtoday/vnc-ws-audio
+          ports:
+            vnc_port: 6080
+            cmd_port: 6082
+
+        - name: browser
+          image: oldwebtoday/base-browser
+          set_user_params: true
+
+          environment:
+            DISPLAY: 'xserver:99'
+            PULSE_SERVER: 'tcp:xserver:4713'
+
+    - name: auto-vnc
+      # for debugging: to allow seeing of log from containers after they've exited
+      auto_remove: false
+      links:
+        - webrecorder_redis_1:redis
+
+      containers:
+        - name: xserver
+          image: oldwebtoday/vnc-ws-audio
+          ports:
+            vnc_port: 6080
+            cmd_port: 6082
+
+        - name: browser
+          image: oldwebtoday/base-browser
+          set_user_params: true
+
+          environment:
+            DISPLAY: 'xserver:99'
+            PULSE_SERVER: 'tcp:xserver:4713'
+
+        - name: autodriver
+          image: autobrowserpy
+          environment:
+            BROWSER_HOST: 'browser'
+            REDIS_URL: 'redis://redis/0'
+
+
