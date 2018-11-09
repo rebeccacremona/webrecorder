@@ -1,5 +1,6 @@
 import requests
 import pytest
+import subprocess
 
 
 # ============================================================================
@@ -29,6 +30,15 @@ class TestAuto(object):
     def delete(self, url, **kwargs):
         full_url = self.PREFIX + url
         return self.session.delete(full_url, **kwargs)
+
+    @pytest.mark.always
+    def test_create_user(self):
+        res = subprocess.run(['docker', 'exec', 'webrecorder_app_1', "python", "-m", "webrecorder.admin",
+                              "-c", "testauto@example.com", "testauto", "TestTest123", "archivist", "Auto Test"],
+                             stdout=subprocess.PIPE)
+
+        assert b'Created user testauto' in res.stdout or b'A user already exists' in res.stdout
+        assert res.returncode == 0
 
     @pytest.mark.always
     def test_login(self):
