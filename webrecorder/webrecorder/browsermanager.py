@@ -60,8 +60,11 @@ class BrowserManager(object):
 
         sesh = self.get_session()
         sesh.set_restricted_user(username)
-        sesh.set_id(self.browser_sesh_id(container_data['reqid']))
 
+        sesh_id = self.browser_sesh_id(container_data['reqid'])
+        sesh.set_id(sesh_id)
+
+        container_data['id'] = sesh_id
         container_data['ip'] = remote_addr
 
         the_user = self.user_manager.all_users[username]
@@ -155,7 +158,7 @@ class BrowserManager(object):
         except:
             return {'error_message': 'Not a writable browser'}
 
-        self.browser_redis.hmset('ip:' + ip, container_data)
+        self.browser_redis.hmset(self.BROWSER_IP_KEY.format(ip), container_data)
 
         return {}
 
