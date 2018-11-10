@@ -13,6 +13,8 @@ import os
 class BrowserManager(object):
     running = True
 
+    BROWSER_IP_KEY = 'up:{0}'
+
     def __init__(self, config, browser_redis, user_manager):
         self.browser_redis = browser_redis
 
@@ -48,7 +50,7 @@ class BrowserManager(object):
     def init_cont_browser_sesh(self):
         remote_addr = request.environ['REMOTE_ADDR']
 
-        container_data = self.browser_redis.hgetall('ip:' + remote_addr)
+        container_data = self.browser_redis.hgetall(self.BROWSER_IP_KEY.format(remote_addr))
 
         if not container_data or 'user' not in container_data:
             print('Data not found for remote ' + remote_addr)
@@ -77,7 +79,7 @@ class BrowserManager(object):
         return container_data
 
     def update_local_browser(self, data):
-        self.browser_redis.hmset('ip:127.0.0.1', data)
+        self.browser_redis.hmset(self.BROWSER_IP_KEY.format('127.0.0.1'), data)
 
     def browser_sesh_id(self, reqid):
         return 'reqid_' + reqid
@@ -126,7 +128,7 @@ class BrowserManager(object):
         if not ip:
             return {'error_message': 'No Container Found'}
 
-        container_data = self.browser_redis.hgetall('ip:' + ip)
+        container_data = self.browser_redis.hgetall(self.BROWSER_IP_KEY.format(ip))
 
         if not container_data:
             return {'error_message': 'Invalid Container'}

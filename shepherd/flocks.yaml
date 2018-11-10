@@ -20,6 +20,7 @@ flocks:
       auto_remove: false
       links:
         - webrecorder_redis_1:redis
+        - webrecorder_app_1:app
 
       containers:
         - name: xserver
@@ -36,10 +37,13 @@ flocks:
             DISPLAY: 'xserver:99'
             PULSE_SERVER: 'tcp:xserver:4713'
 
+            PROXY_HOST: 'app'
+            PROXY_PORT: '8088'
+            PROXY_GET_CA: 'http://wsgiprox/download/pem'
+
         - name: autodriver
           image: autobrowserpy
           environment:
             BROWSER_HOST: 'browser'
-            REDIS_URL: 'redis://redis/0'
 
 

@@ -85,7 +85,7 @@ def init_routes(app):
             environ['AUDIO_TYPE'] = audio
 
         # vnc password
-        vnc_pass = base64.b64encode(os.urandom(21)).decode('utf-8')
+        vnc_pass = 'secret'#base64.b64encode(os.urandom(21)).decode('utf-8')
         environ['VNC_PASS'] = vnc_pass
 
         res = app.get_pool(DEFAULT_POOL).start(reqid, environ=environ)
@@ -102,6 +102,10 @@ def init_routes(app):
                       }
 
         return browser_res
+
+    @app.route('/attach/<reqid>')
+    def attach(reqid):
+        return render_template('browser_embed.html', reqid=reqid)
 
     @app.route('/view/<browser>/<path:url>')
     @app.route('/view/<flock>/<browser>/<path:url>')
