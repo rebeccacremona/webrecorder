@@ -1,3 +1,4 @@
+export Automation from './Automation/Automation';
 export Blinker from './Blinker/Blinker';
 export BugReport from './BugReport/BugReport';
 export CollectionCover from './CollectionCover/CollectionCover';

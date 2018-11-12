@@ -14,7 +14,7 @@ import config from 'config';
 import { setSort } from 'redux/modules/collection';
 import { getCollectionLink, getListLink, getStorage, inStorage, range, setStorage, truncate } from 'helpers/utils';
 
-import { CollectionFilters, CollectionHeader, InspectorPanel,
+import { Automation, CollectionFilters, CollectionHeader, InspectorPanel,
          Lists, ListHeader, Sidebar, Temp404, TempUserAlert } from 'containers';
 
 import HttpStatus from 'components/HttpStatus';
@@ -535,6 +535,11 @@ class CollectionDetailUI extends Component {
             <TempUserAlert />
         }
 
+        {
+          canAdmin &&
+            <Automation collection={collection} />
+        }
+
         <Sidebar storageKey="collSidebar">
           <CollectionHeader />
           <div className="resizable-container">
@@ -553,7 +558,6 @@ class CollectionDetailUI extends Component {
             <InspectorPanel />
           </div>
         </Sidebar>
-
 
         <div className="table-container">
           {
