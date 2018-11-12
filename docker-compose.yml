@@ -125,7 +125,7 @@ services:
 
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - ./shepherd/flocks.yaml:/app/flocks.yaml
+            - ./shepherd/:/app/
 
         ports:
             - 9020:9020

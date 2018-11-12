@@ -69,7 +69,6 @@ class TestAuto(object):
 
     def test_add_urls(self):
         params = {'urls': [
-            #'https://example.com/'
             'https://twitter.com/webrecorder_io',
             'https://rhizome.org/'
             ]}

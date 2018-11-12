@@ -1,5 +1,6 @@
 flocks:
     - name: browsers-vnc
+
       containers:
         - name: xserver
           image: oldwebtoday/vnc-ws-audio
@@ -10,17 +11,19 @@ flocks:
         - name: browser
           image: oldwebtoday/base-browser
           set_user_params: true
+          external_network: webrecorder_browsers
 
           environment:
             DISPLAY: 'xserver:99'
             PULSE_SERVER: 'tcp:xserver:4713'
 
+            PROXY_HOST: 'app'
+            PROXY_PORT: '8088'
+            PROXY_GET_CA: 'http://wsgiprox/download/pem'
+
     - name: auto-vnc
       # for debugging: to allow seeing of log from containers after they've exited
       auto_remove: false
-      links:
-        - webrecorder_redis_1:redis
-        - webrecorder_app_1:app
 
       containers:
         - name: xserver
@@ -32,6 +35,7 @@ flocks:
         - name: browser
           image: oldwebtoday/base-browser
           set_user_params: true
+          external_network: webrecorder_browsers
 
           environment:
             DISPLAY: 'xserver:99'
@@ -43,6 +47,7 @@ flocks:
 
         - name: autodriver
           image: autobrowserpy
+          external_network: webrecorder_default
           environment:
             BROWSER_HOST: 'browser'
 

@@ -88,7 +88,7 @@ class BrowserManager(object):
         return 'reqid_' + reqid
 
     def _api_new_browser(self, req_url, container_data):
-        r = requests.post(req_url, data=container_data)
+        r = requests.post(req_url, json=container_data)
         return r.json()
 
     def request_new_browser(self, container_data):
