@@ -36,7 +36,7 @@ class Automation extends Component {
       autoModal: false,
       checkedLists: {},
       listAutoLinks: '',
-      scope: 'single-domain',
+      scope: 'single-page',
       workers: []
     };
   }
@@ -115,7 +115,7 @@ class Automation extends Component {
           </FormGroup>
           <FormGroup bsClass="form-group automation-scope">
             <ControlLabel>Scope:</ControlLabel>
-            <Radio name="scope" onChange={this.handleChange} value="single-domain" checked={scope === 'single-domain'} inline>
+            <Radio name="scope" onChange={this.handleChange} value="single-page" checked={scope === 'single-page'} inline>
               Single Domain
             </Radio>
             <Radio name="scope" onChange={this.handleChange} value="same-domain" checked={scope === 'same-domain'} inline>

@@ -49,7 +49,7 @@ export function toggleModal(bool) {
 }
 
 
-export function newAutomation(user, coll, crawl_depth = 0, scope = 'single-domain', num_browsers = 1) {
+export function newAutomation(user, coll, crawl_depth = 0, scope = 'single-page', num_browsers = 1) {
   return {
     types: [NEW_AUTO, NEW_AUTO_SUCCESS, NEW_AUTO_FAIL],
     promise: client => client.post(`${apiPath}/auto`, {
