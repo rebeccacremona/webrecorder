@@ -36,6 +36,7 @@ class Automation extends Component {
       autoModal: false,
       checkedLists: {},
       listAutoLinks: '',
+      num_browsers: 1,
       scope: 'single-page',
       workers: []
     };
@@ -44,7 +45,6 @@ class Automation extends Component {
   componentDidUpdate(prevProps) {
     if (this.props.autoQueued && !prevProps.autoQueued) {
       // setTimeout(this.closeAutoModal, 1500);
-      this.refreshHandle = setInterval(this.refresh, 2500);
 
       this.pingHandle = setInterval(this.ping, 5000);
     }
@@ -67,6 +67,9 @@ class Automation extends Component {
       .then((data) => {
         if (data.auto.browsers.length) {
           clearInterval(this.pingHandle);
+
+          this.refreshHandle = setInterval(this.refresh, 2500);
+
           this.setState({ workers: data.auto.browsers });
         }
       });
@@ -77,13 +80,14 @@ class Automation extends Component {
   sendStopAutomation = () => {
     const { autoId, collection } = this.props;
     this.props.stopAutomation(collection.get('owner'), collection.get('id'), autoId);
+    clearInterval(this.refreshHandle);
   }
 
   startAutomation = () => {
     const { collection } = this.props;
-    const { autoHops, listAutoLinks, scope } = this.state;
+    const { autoHops, listAutoLinks, num_browsers, scope } = this.state;
     const links = listAutoLinks.trim().split('\n');
-    this.props.createAutomation(collection.get('owner'), collection.get('id'), links, parseInt(autoHops, 10), scope);
+    this.props.createAutomation(collection.get('owner'), collection.get('id'), links, parseInt(autoHops, 10), scope, parseInt(num_browsers, 10));
   }
 
   render() {
@@ -106,11 +110,11 @@ class Automation extends Component {
         }>
         <React.Fragment>
           <FormGroup>
-            <ControlLabel>Link hops:</ControlLabel>
+            <ControlLabel>Number of Workers:</ControlLabel>
             <FormControl
               type="text"
-              name="autoHops"
-              value={this.state.autoHops}
+              name="num_browsers"
+              value={this.state.num_browsers}
               onChange={this.handleChange} />
           </FormGroup>
           <FormGroup bsClass="form-group automation-scope">
@@ -166,9 +170,9 @@ const mapStateToProps = ({ app }) => {
 const mapDispatchToProps = (dispatch, { collection }) => {
   return {
     refresh: () => dispatch(loadColl(collection.get('owner'), collection.get('id'))),
-    createAutomation: (user, coll, bookmarks, hops, scope) => {
+    createAutomation: (user, coll, bookmarks, hops, scope, num_browsers) => {
       let autoId;
-      return dispatch(newAutomation(user, coll, hops, scope))
+      return dispatch(newAutomation(user, coll, hops, scope, num_browsers))
         .then(({ auto }) => { autoId = auto; return dispatch(queueAutomation(user, coll, autoId, bookmarks)); })
         .then(() => dispatch(toggleAutomation('start', user, coll, autoId)))
         .then(() => dispatch(loadColl(user, coll)));
