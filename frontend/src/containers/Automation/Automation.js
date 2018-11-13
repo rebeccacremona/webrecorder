@@ -19,8 +19,9 @@ class Automation extends Component {
     autoId: PropTypes.string,
     autoQueued: PropTypes.bool,
     collection: PropTypes.object,
-    refresh: PropTypes.func,
     createAutomation: PropTypes.func,
+    refresh: PropTypes.func,
+    stopAutomation: PropTypes.func,
     visible: PropTypes.bool
   };
 
@@ -73,6 +74,11 @@ class Automation extends Component {
 
   refresh = () => this.props.refresh()
 
+  sendStopAutomation = () => {
+    const { autoId, collection } = this.props;
+    this.props.stopAutomation(collection.get('owner'), collection.get('id'), autoId);
+  }
+
   startAutomation = () => {
     const { collection } = this.props;
     const { autoHops, listAutoLinks, scope } = this.state;
@@ -93,7 +99,7 @@ class Automation extends Component {
             <Button style={{ marginRight: 5 }} onClick={this.closeAutoModal}>Close</Button>
             {
               this.props.active &&
-                <Button style={{ marginRight: 5 }} onClick={this.closeAutoModal}>Stop Automation</Button>
+                <Button style={{ marginRight: 5 }} onClick={this.sendStopAutomation}>Stop Automation</Button>
             }
             <Button onClick={this.startAutomation} disabled={this.props.autoQueued} bsStyle={this.props.autoQueued ? 'success' : 'primary'}>{`Create${this.props.autoQueued ? 'd!' : ''}`}</Button>
           </React.Fragment>
@@ -136,7 +142,7 @@ class Automation extends Component {
                 <ControlLabel>Automation Workers:</ControlLabel>
                 <FormControl.Static>
                   {
-                    this.state.workers.map((worker, idx) => <a href={`http://${window.location.hostname}:9020/attach/${worker}`} key={worker} target="_blank">Worker {idx + 1}</a>)
+                    this.state.workers.map((worker, idx) => <a href={`http://${window.location.hostname}:9020/attach/${worker}`} key={worker} target="_blank" style={{display: 'block'}}>Worker {idx + 1}</a>)
                   }
                 </FormControl.Static>
               </FormGroup>
@@ -167,6 +173,7 @@ const mapDispatchToProps = (dispatch, { collection }) => {
         .then(() => dispatch(toggleAutomation('start', user, coll, autoId)))
         .then(() => dispatch(loadColl(user, coll)));
     },
+    stopAutomation: (user, coll, aid) => dispatch(toggleAutomation('stop', user, coll, aid)),
     toggleAutomationModal: () => dispatch(toggleModal())
   };
 };
