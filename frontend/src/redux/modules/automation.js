@@ -21,7 +21,8 @@ const initialState = fromJS({
   autoId: null,
   active: false,
   queued: false,
-  show: false
+  show: false,
+  workers: []
 });
 
 
@@ -34,7 +35,10 @@ export default function automation(state = initialState, action = {}) {
     case TOGGLE_MODAL:
       return state.set('show', typeof action.bool !== 'undefined' ? action.bool : !state.get('show'));
     case TOGGLE_AUTOMATION_SUCCESS:
-      return state.set('active', action.mode === 'start');
+      return state.merge({
+        active: action.mode === 'start',
+        workers: action.result.browsers || []
+      });
     default:
       return state;
   }

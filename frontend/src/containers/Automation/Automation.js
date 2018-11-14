@@ -22,7 +22,8 @@ class Automation extends Component {
     createAutomation: PropTypes.func,
     refresh: PropTypes.func,
     stopAutomation: PropTypes.func,
-    visible: PropTypes.bool
+    visible: PropTypes.bool,
+    workers: PropTypes.array
   };
 
   constructor(props) {
@@ -37,8 +38,7 @@ class Automation extends Component {
       checkedLists: {},
       listAutoLinks: '',
       num_browsers: 1,
-      scope: 'single-page',
-      workers: []
+      scope: 'single-page'
     };
   }
 
@@ -46,7 +46,7 @@ class Automation extends Component {
     if (this.props.autoQueued && !prevProps.autoQueued) {
       // setTimeout(this.closeAutoModal, 1500);
 
-      this.pingHandle = setInterval(this.ping, 5000);
+      this.refreshHandle = setInterval(this.refresh, 2500);
     }
   }
 
@@ -58,22 +58,6 @@ class Automation extends Component {
   closeAutoModal = () => this.setState({ autoModal: false })
 
   handleChange = evt => this.setState({ [evt.target.name]: evt.target.value })
-
-  ping = () => {
-    const { collection } = this.props;
-
-    apiFetch(`/auto/${this.props.autoId}?user=${collection.get('owner')}&coll=${collection.get('id')}`)
-      .then(res => res.json())
-      .then((data) => {
-        if (data.auto.browsers.length) {
-          clearInterval(this.pingHandle);
-
-          this.refreshHandle = setInterval(this.refresh, 2500);
-
-          this.setState({ workers: data.auto.browsers });
-        }
-      });
-  }
 
   refresh = () => this.props.refresh()
 
@@ -120,7 +104,7 @@ class Automation extends Component {
           <FormGroup bsClass="form-group automation-scope">
             <ControlLabel>Scope:</ControlLabel>
             <Radio name="scope" onChange={this.handleChange} value="single-page" checked={scope === 'single-page'} inline>
-              Single Domain
+              Single Page
             </Radio>
             <Radio name="scope" onChange={this.handleChange} value="same-domain" checked={scope === 'same-domain'} inline>
               Same Domain
@@ -141,12 +125,12 @@ class Automation extends Component {
           </FormGroup>
 
           {
-            this.state.workers.length > 0 &&
+            this.props.workers.size > 0 &&
               <FormGroup>
                 <ControlLabel>Automation Workers:</ControlLabel>
                 <FormControl.Static>
                   {
-                    this.state.workers.map((worker, idx) => <a href={`http://${window.location.hostname}:9020/attach/${worker}`} key={worker} target="_blank" style={{display: 'block'}}>Worker {idx + 1}</a>)
+                    this.props.workers.map((worker, idx) => <a href={`http://${window.location.hostname}:9020/attach/${worker}`} key={worker} target="_blank" style={{display: 'block'}}>Worker {idx + 1}</a>)
                   }
                 </FormControl.Static>
               </FormGroup>
@@ -163,7 +147,8 @@ const mapStateToProps = ({ app }) => {
     active: app.getIn(['automation', 'active']),
     autoId: app.getIn(['automation', 'autoId']),
     autoQueued: app.getIn(['automation', 'queued']),
-    visible: app.getIn(['automation', 'show'])
+    visible: app.getIn(['automation', 'show']),
+    workers: app.getIn(['automation', 'workers'])
   };
 };
 
