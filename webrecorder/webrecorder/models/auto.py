@@ -157,7 +157,7 @@ class Auto(RedisUniqueComponent):
 
         if not errors:
             self['status'] = 'running'
-            return {'success': True}
+            return {'success': True, 'browsers': list(self.redis.smembers(self.browser_key))}
 
         else:
             return {'error': 'not_started', 'details': errors}
