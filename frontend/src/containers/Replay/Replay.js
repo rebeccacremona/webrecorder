@@ -21,8 +21,7 @@ import HttpStatus from 'components/HttpStatus';
 import RedirectWithStatus from 'components/RedirectWithStatus';
 import Resizable from 'components/Resizable';
 import Webview from 'components/player/Webview';
-import { InspectorPanel, RemoteBrowser, Sidebar, SidebarListViewer,
-         SidebarCollectionViewer, SidebarPageViewer } from 'containers';
+import { InspectorPanel, RemoteBrowser, Sidebar, SidebarListViewer, SidebarCollectionViewer, SidebarPageViewer } from 'containers';
 import { IFrame, ReplayUI } from 'components/controls';
 
 
@@ -114,8 +113,18 @@ class Replay extends Component {
   }
 
   render() {
-    const { activeBookmarkId, activeBrowser, appSettings, collection,
-            dispatch, list, match: { params }, recording, timestamp, url } = this.props;
+    const {
+      activeBookmarkId,
+      activeBrowser,
+      appSettings,
+      collection,
+      dispatch,
+      list,
+      match: { params },
+      recording,
+      timestamp,
+      url
+    } = this.props;
 
     // coll access
     if (collection.get('error')) {
@@ -152,7 +161,7 @@ class Replay extends Component {
     }
 
     const tsMod = remoteBrowserMod(activeBrowser, timestamp);
-    const listSlug = params.listSlug;
+    const { listSlug } = params;
     const bkId = params.bookmarkId;
 
     const shareUrl = listSlug ?

@@ -47,8 +47,9 @@ export function buildDate(dt, gmt, humanize) {
   if (dt) {
     let DTString = String(dt);
 
-    if (DTString.length < 14)
+    if (DTString.length < 14) {
       DTString += '10000101000000'.substr(DTString.length);
+    }
 
     const datestr = (DTString.substring(0, 4) + '-' +
                      DTString.substring(4, 6) + '-' +
@@ -197,7 +198,7 @@ export function isEqual(a, b) {
   }
 
   // mismatched types
-  if (Object.prototype.toString.call(a) !== Object.prototype.toString.call(a)) {
+  if (Object.prototype.toString.call(a) !== Object.prototype.toString.call(b)) {
     return false;
   }
 
