@@ -131,13 +131,13 @@
   },
   "betterScripts": {
     "build-player-dev": {
-      "command": "webpack --watch --verbose --colors --display-error-details --config webpack/player.config.js",
+      "command": "webpack --watch --colors --display-error-details --config webpack/player.config.js",
       "env": {
         "NODE_ENV": "development"
       }
     },
     "build-player": {
-      "command": "webpack --verbose --colors --display-error-details --config webpack/player.config.js",
+      "command": "webpack --colors --display-error-details --config webpack/player.config.js",
       "env": {
         "NODE_ENV": "production"
       }
