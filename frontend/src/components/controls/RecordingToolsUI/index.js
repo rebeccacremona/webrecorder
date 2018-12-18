@@ -32,7 +32,7 @@ class RecordingToolsUI extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = { clipboardOpen: false };
+    this.state = { automation: false, clipboardOpen: false };
   }
 
   onPatch = () => {
@@ -85,6 +85,11 @@ class RecordingToolsUI extends PureComponent {
     this.props.history.push(`/${user}/${coll}/index`);
   }
 
+  toggleAutomation = () => {
+    apiFetch(`/browsers/toggle_auto/${this.props.reqId}`);
+    this.setState({automation: !this.state.automation});
+  }
+
   toggleAutoscroll = () => {
     this.props.toggleAutoscroll(!this.props.autoscroll);
   }
@@ -101,6 +106,7 @@ class RecordingToolsUI extends PureComponent {
   render() {
     const { canAdmin, currMode } = this.context;
     const { activeBrowser, autoscroll } = this.props;
+    const { automation } = this.state;
 
     const isNew = currMode === 'new';
     const isWrite = ['new', 'patch', 'record', 'extract'].includes(currMode);
@@ -131,6 +137,10 @@ class RecordingToolsUI extends PureComponent {
                   </React.Fragment>
               }
               <MenuItem divider />
+              {
+                activeBrowser &&
+                  <MenuItem onClick={this.toggleAutomation}>{automation ? 'Turn off' : 'Turn on'} automation</MenuItem>
+              }
               <MenuItem onClick={this.toggleAutoscroll}>{autoscroll ? 'Turn off' : 'Turn on'} autoscroll</MenuItem>
               {
                 activeBrowser &&
