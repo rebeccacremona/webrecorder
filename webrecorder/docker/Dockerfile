@@ -14,4 +14,4 @@ USER archivist
 
 WORKDIR /code
 
-COPY . /code/
+COPY --chown=archivist:archivist . /code/
