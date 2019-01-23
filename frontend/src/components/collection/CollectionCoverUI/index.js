@@ -80,6 +80,17 @@ class CollectionCoverUI extends Component {
           const index = (this.waypoints.length - 1) - idx;
           if (this.state.activeList !== index) {
             this.setState({ activeList: index });
+
+            const spyBcr = this.scrollSpy.getBoundingClientRect();
+            if (this.scrollSpy.scrollHeight > spyBcr.height) {
+              requestAnimationFrame(() => {
+                const ele = this.scrollSpy.querySelectorAll('li')[index];
+                const bcr = ele.getBoundingClientRect();
+                if ((bcr.bottom - spyBcr.top) < this.scrollSpy.scrollTop || (bcr.top - spyBcr.top) > (this.scrollSpy.scrollTop + spyBcr.height)) {
+                  ele.scrollIntoView({ block: 'start' }); // TODO: behavior: 'smooth' doesn't seem to work
+                }
+              });
+            }
           }
 
           return true;
@@ -155,20 +166,22 @@ class CollectionCoverUI extends Component {
           </TabList>
 
           <TabPanel className="react-tabs__tab-panel overview-tab">
-            <ul className="scrollspy hidden-xs">
-              {
-                !isMobile && lists && lists.map((list, idx) => {
-                  return (
-                    <ScrollspyEntry
-                      key={list.get('id')}
-                      index={idx}
-                      onSelect={this.goToList}
-                      selected={idx === this.state.activeList}
-                      title={list.get('title')} />
-                  );
-                })
-              }
-            </ul>
+            <div className="scroll-wrapper scrollspy-scrollable hidden-xs">
+              <ul className="scrollspy" ref={(obj) => { this.scrollSpy = obj; }}>
+                {
+                  !isMobile && lists && lists.map((list, idx) => {
+                    return (
+                      <ScrollspyEntry
+                        key={list.get('id')}
+                        index={idx}
+                        onSelect={this.goToList}
+                        selected={idx === this.state.activeList}
+                        title={list.get('title')} />
+                    );
+                  })
+                }
+              </ul>
+            </div>
 
             <ListsScrollable
               collection={collection}
