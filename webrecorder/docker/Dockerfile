@@ -15,6 +15,8 @@ RUN mkdir -p /data/warcs \
     && mkdir /data/storage \
     && chown -R archivist:archivist /data
 
+VOLUME /data
+
 USER archivist
 
 WORKDIR /code
