@@ -99,6 +99,11 @@ export class App extends Component {
     }
 
     document.addEventListener(this.visibilityChange, this.heartbeat);
+
+    if (__DESKTOP__) {
+      //this.setState({ match: this.getActiveRoute("/") });
+      this.props.history.push("/");
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -144,7 +149,7 @@ export class App extends Component {
     const { route: { routes } } = this.props;
 
     const match = routes.find((route) => {
-      return matchPath(url, route);
+      return matchPath(this.props.location.pathname, route);
     });
 
     return match;

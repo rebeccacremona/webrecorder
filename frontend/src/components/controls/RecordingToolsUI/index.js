@@ -37,7 +37,7 @@ class RecordingToolsUI extends PureComponent {
   onPatch = () => {
     if (this.context.currMode === 'record') return;
 
-    const { activeBrowser, match: { params: { coll } }, timestamp, url } = this.props;
+    const { activeBrowser, history, match: { params: { coll } }, timestamp, url } = this.props;
 
     // data to create new recording
     const data = {
@@ -54,14 +54,14 @@ class RecordingToolsUI extends PureComponent {
     // generate recording url
     apiFetch('/new', data, { method: 'POST' })
       .then(res => res.json())
-      .then(({ url }) => { window.location.href = url.replace(appHost, ''); })
+      .then(({ url }) => { history.push(url.replace(appHost, '')); })
       .catch(err => console.log('error', err));
   }
 
   onRecord = () => {
     if (this.context.currMode === 'record') return;
 
-    const { activeBrowser, match: { params: { coll } }, url } = this.props;
+    const { activeBrowser, history, match: { params: { coll } }, url } = this.props;
     const data = {
       url,
       coll,
@@ -75,7 +75,7 @@ class RecordingToolsUI extends PureComponent {
     // generate recording url
     apiFetch('/new', data, { method: 'POST' })
       .then(res => res.json())
-      .then(({ url }) => { window.location.href = url.replace(appHost, ''); })
+      .then(({ url }) => { history.push(url.replace(appHost, '')); })
       .catch(err => console.log('error', err));
   }
 

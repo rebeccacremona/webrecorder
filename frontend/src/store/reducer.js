@@ -45,7 +45,7 @@ const makeAppReducer = () => {
     userSignup
   };
 
-  if (__PLAYER__) {
+  if (__DESKTOP__) {
     reducers.appSettings = appSettings;
   }
 
