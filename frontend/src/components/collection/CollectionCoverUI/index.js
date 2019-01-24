@@ -47,6 +47,8 @@ class CollectionCoverUI extends Component {
     this.waypoints = [];
     this.halfWidth = 0;
     this.scrollable = React.createRef();
+    this.scrollLock = false;
+    this.lockHandle = null;
     this.state = { activeList: 0 };
   }
 
@@ -63,16 +65,28 @@ class CollectionCoverUI extends Component {
     }
   }
 
+  componentWillUnmount() {
+    clearTimeout(this.lockHandle);
+  }
+
   getLists = memoize(collection => collection.get('lists').filter(o => o.get('public') && o.get('bookmarks') && o.get('bookmarks').size))
 
   goToList = (idx) => {
     const { collection, history } = this.props;
     const ele = this.scrollable.current.querySelectorAll('.lists > li')[idx];
+    this.setState({ activeList: idx });
+    this.scrollLock = true;
     ele.scrollIntoView({ block: 'start', behavior: Math.abs(ele.getBoundingClientRect().top) > 10000 ? 'instant' : 'smooth' });
     window.history.replaceState({}, '', `#list-${collection.getIn(['lists', idx, 'id'])}`);
   }
 
-  scrollHandler = () => {
+  scrollHandler = (evt) => {
+    if (this.scrollLock) {
+      clearTimeout(this.lockHandle);
+      this.lockHandle = setTimeout(() => { this.scrollLock = false; }, 100);
+      return;
+    }
+
     requestAnimationFrame(() => {
       const t = this.scrollable.current.scrollTop;
       this.waypoints.some((wp, idx) => {
