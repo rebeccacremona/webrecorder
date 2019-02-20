@@ -9,9 +9,17 @@ with the command line:
 docker build -f docker/Dockerfile -t harvardlil/webrecorder:0.05 .
 ```
 
+To test your changes locally:
+- build the image, making sure to increment the tag
+- alter Perma's `docker-compose` file to point to the new version, which will exist locally on your machine. (Though the image will not yet be on Docker Hub, its local name will be identical to that future public version, so all you have to do is increment the version number.)
+- spin up Perma, attempt a playback
+- toggle Perma's `wr.env` to use the test-specific settings; re-run `docker-compose up`; run Perma's test suite
+- rebuild the Webrecorder Docker image as necessary, and repeat
+- when ready, push to Docker Hub
+
 CHANGELOG
 ---------
 
-### 0.06 
-Expose the pre-populated, chown'ed `/data` directory as a volume to 
+### 0.06
+Expose the pre-populated, chown'ed `/data` directory as a volume to
 avoid permissions problems when using named volumes.
