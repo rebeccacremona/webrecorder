@@ -19,6 +19,8 @@ To test your changes locally:
 
 CHANGELOG
 ---------
+### 0.07
+Update to Webrecorder 4.2.0
 
 ### 0.06
 Expose the pre-populated, chown'ed `/data` directory as a volume to
