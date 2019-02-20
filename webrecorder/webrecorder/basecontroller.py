@@ -21,6 +21,7 @@ class BaseController(object):
         self.user_manager = kwargs['user_manager']
         self.config = kwargs['config']
         self.redis = kwargs['redis']
+        self.cork = kwargs['cork']
 
         self.api = api_decorator
 
@@ -146,6 +147,18 @@ class BaseController(object):
             self._raise_error(404, 'no_such_collection')
 
         return user, collection
+
+    def require_admin_beta_access(self, collection=None):
+        """
+        Ensure user has at least beta-archivist privs
+        and is also admin on the collection, if provided
+        """
+        try:
+            self.cork.require(role='beta-archivist')
+            if collection:
+                self.access.assert_can_admin_coll(collection)
+        except:
+            self._raise_error(400, 'not_allowed')
 
     def _raise_error(self, code, message='not_found'):
         result = {'error': message}
