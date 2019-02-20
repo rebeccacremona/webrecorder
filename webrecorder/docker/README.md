@@ -20,8 +20,9 @@ To test your changes locally:
 CHANGELOG
 ---------
 ### 0.07
-Update to Webrecorder 4.2.0
+- Update to Webrecorder 4.2.0
+- Don't do any directory-related work in `Dockerfile`; will be achieved via the ENTRYPOINT script for the `recorder` container.
 
 ### 0.06
-Expose the pre-populated, chown'ed `/data` directory as a volume to
+- Expose the pre-populated, chown'ed `/data` directory as a volume to
 avoid permissions problems when using named volumes.

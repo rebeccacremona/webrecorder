@@ -10,13 +10,6 @@ RUN pip install -U pip \
     && pip install git+https://github.com/FedericoCeratto/bottle-cork.git@94d4017a4d1b0d20328e9283e341bd674df3a18a#egg=bottle-cork \
     && pip install -r requirements.txt
 
-
-RUN mkdir -p /data/warcs \
-    && mkdir /data/storage \
-    && chown -R archivist:archivist /data
-
-VOLUME /data
-
 USER archivist
 
 WORKDIR /code
