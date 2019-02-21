@@ -6,7 +6,7 @@ Sample invocation: generate the image harvardlil/webrecorder:0.05
 with the command line:
 
 ```
-docker build -f docker/Dockerfile -t harvardlil/webrecorder:0.05 .
+docker build -f perma/webrecorder/Dockerfile -t harvardlil/webrecorder:0.05 .
 ```
 
 To test your changes locally:
