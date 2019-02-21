@@ -2,7 +2,7 @@ FROM webrecorder/pywb:develop
 
 WORKDIR /build
 
-ADD requirements.txt /build/
+ADD webrecorder/requirements.txt /build/
 
 USER root
 
@@ -14,4 +14,4 @@ USER archivist
 
 WORKDIR /code
 
-COPY --chown=archivist:archivist . /code/
+COPY --chown=archivist:archivist webrecorder /code/
