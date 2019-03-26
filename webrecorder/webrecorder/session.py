@@ -79,7 +79,10 @@ class Session(object):
         self.template_params = params
 
     def is_new(self):
-        return self.ttl == -2
+        if self.ttl == -2:
+            return True
+
+        return 'username' not in self._sesh and 'anon' not in self._sesh
 
     def get_id(self):
         if self.is_new():
