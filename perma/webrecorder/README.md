@@ -11,7 +11,12 @@ To test your changes locally:
 - spin up Perma, attempt a playback
 - toggle Perma's `wr.env` to use the test-specific settings; re-run `docker-compose up`; run Perma's test suite
 - rebuild the Webrecorder Docker image as necessary, and repeat
-- when ready, push to Docker Hub
+- when ready, push to Docker Hub:
+
+```
+docker push harvardlil/webrecorder:0.05
+```
+
 
 CHANGELOG
 ---------
