@@ -18,7 +18,7 @@ CHANGELOG
 ### 0.08
 - Update to Webrecorder '4.2.1'
 - Pin Pywb image version, as Webrecorder now does
-- New Pywb is configured to create the archivist user using a docker entrypoint script, so that the UID/GID can be set to match the user who owns the warcs volume, which is a bind mount in standard Pywb/Webrecorder deployments. This is undesirable for Perma, since we are using named volumes, which are managed by the docker daemon and thus are normally owned by root. So, we are create archivist user as in earlier versions of Pywb and are overriding ENTRYPOINT to prevent the default entrypoint script from running.
+- New Pywb is configured to create the archivist user using a docker entrypoint script, so that the UID/GID can be set to match the user who owns the warcs volume, which is a bind mount in standard Pywb/Webrecorder deployments. This is undesirable for Perma, since we are using named volumes, which are managed by the docker daemon and thus are normally owned by root. So, we are creating the archivist user as in earlier versions of Pywb and are overriding ENTRYPOINT to prevent the default entrypoint script from running.
 
 ### 0.07
 - Update to Webrecorder 4.2.0
