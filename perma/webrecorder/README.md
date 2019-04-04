@@ -15,6 +15,10 @@ To test your changes locally:
 
 CHANGELOG
 ---------
+### 0.09
+- Update to Webrecoder '4.3.0'
+- Update Pywb image version to match
+
 ### 0.08
 - Update to Webrecorder '4.2.1'
 - Pin Pywb image version, as Webrecorder now does
@@ -27,3 +31,32 @@ CHANGELOG
 ### 0.06
 - Expose the pre-populated, chown'ed `/data` directory as a volume to
 avoid permissions problems when using named volumes.
+
+
+Detailed workflow for incorporating new changes from upstream (WIP)
+-------------------------------------------------------------------
+You should have three remotes, similar to:
+```
+lil git@github.com:harvard-lil/webrecorder.git (fetch)
+lil git@github.com:harvard-lil/webrecorder.git (push)
+origin  git@github.com:rebeccacremona/webrecorder.git (fetch)
+origin  git@github.com:rebeccacremona/webrecorder.git (push)
+upstream    git@github.com:webrecorder/webrecorder.git (fetch)
+upstream    git@github.com:webrecorder/webrecorder.git (push)
+```
+1) Compare upstream and LIL's "master" branches to review changes https://github.com/harvard-lil/webrecorder/compare/master...webrecorder:master
+2) Checkout `master` branch locally. Pull in upstream's changes. Push to your origin.
+3) Checkout `perma` branch locally. Merge in master.
+4) Bring Perma's customizations into harmony with the latest WR. May involve changes to the `perma` directory of this repo AND changes to Perma itself, especially the `services/docker/webrecorder` directory.
+5) Build the harvard-lil/webrecorder Docker image; don't push it to Dockerhub yet.
+6) Configure your local Perma to use the newly-built image by adjusting `docker-compose.yml` and `docker-compose-travis.yml`. Spin up some new containers.
+7) Repeat 4-6 as needed.
+8) Commit your changes to `perma` and push to your origin.
+9) Make a PR from your origin to LIL. (URL similar to https://github.com/harvard-lil/webrecorder/compare/perma...rebeccacremona:perma?expand=1). No tests will run.
+10) Make a PR to Perma. Tests will error, because the new Docker image doesn't yet exist on Github.
+11) Review and merge in the WR PR.
+12) Checkout the `master` branch locally, which you updated in step 2, and push to LIL remote. Should be completed by the person who opened the PR, just in case new commits were merged to master by the WR team in the meantime.
+13) Push the new WR image to Dockerhub. (You'll have to build and tag first, if you aren't the person who openined the PR.)
+14) Restart the Perma PR's Travis build.
+15) When the tests pass, merge at will.
+16) Redeploy, updating Salt config / files on the servers to match the Perma repo as necessary.
