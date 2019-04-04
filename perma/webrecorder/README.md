@@ -56,7 +56,7 @@ upstream    git@github.com:webrecorder/webrecorder.git (push)
 10) Make a PR to Perma. Tests will error, because the new Docker image doesn't yet exist on Github.
 11) Review and merge in the WR PR.
 12) Checkout the `master` branch locally, which you updated in step 2, and push to LIL remote. Should be completed by the person who opened the PR, just in case new commits were merged to master by the WR team in the meantime.
-13) Push the new WR image to Dockerhub. (You'll have to build and tag first, if you aren't the person who openined the PR.)
+13) Push the new WR image to Dockerhub. (You'll have to build and tag first, if you aren't the person who opened the PR.)
 14) Restart the Perma PR's Travis build.
 15) When the tests pass, merge at will.
 16) Redeploy, updating Salt config / files on the servers to match the Perma repo as necessary.
